@@ -110,14 +110,17 @@ jobs:
           node-version: 22.x
           cache: 'yarn'
       - run: yarn --immutable
+      # Environmental: this copy has no GitHub App installation credentials, so the
+      # token step is allowed to fail and the step below falls back to the workflow token.
       - uses: actions/create-github-app-token@v3
         id: app-token
+        continue-on-error: true
         with:
           app-id: ${{ secrets.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - uses: actions/github-script@v8
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token || github.token }}
           script: |
             const script = require('.github/command-runner/runOrBump.cjs')
             const { command, args, env, commentId } = ${{ needs.check.outputs.result }}

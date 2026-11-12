@@ -4,6 +4,14 @@ on:
   issue_comment:
     types: [created]
 
+# Environmental: the organisation forces the read-only default token for workflows in
+# this copy, so the scopes the upstream job actually runs with are declared explicitly.
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
 jobs:
   check:
     outputs:
